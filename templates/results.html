@@ -1,0 +1,26 @@
+{% extends 'index.html' %}
+
+{% block body %}
+
+
+<div class="rTable">
+    {% for t, d, z in results %}
+        <div class="rTableRow">
+        <div class="rTableHead"><a href={{t}}>{{t}}</a></div>
+        </div>
+        <div class="rTableRow">
+        <div class="rTableCell"><a href={{t}}><strong>{{z}}</a></strong></div>
+        <div>
+        <div class="rTableRow">
+        <div class="rTableCell">{{d}}</div>
+        </div>
+      </div>
+
+      <div class="row">
+        &nbsp;
+        &nbsp;
+      </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

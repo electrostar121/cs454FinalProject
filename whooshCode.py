@@ -65,7 +65,7 @@ if __name__ == "__main__":
 
     #this is our schema
     schema = Schema(url = ID(stored=True),
-                    content = TEXT(analyzer = StemmingAnalyzer()))
+                    content = TEXT(analyzer = StemmingAnalyzer(), stored=True))
 
     #checks if the index already exists, if it doesn't then create an index based off of the directory we pass it
     if not os.path.exists("indexdir"):

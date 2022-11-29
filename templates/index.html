@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>H2Search</title>
+
+    <!-- Favicon -->
+    <link href="{{url_for( 'static', filename= 'assets/img/favicon.jpg') }}" rel="icon" type="image/jpg">
+  
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
+  
+    <!-- Icons -->
+    <link href="{{url_for( 'static', filename= 'assets/css/nucleo-icons.css') }}" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+  
+    <!-- Material Kit-->
+    <link type="text/css" href="{{url_for( 'static', filename= 'assets/css/material-kit.min.css') }}" rel="stylesheet">
+
+    <style>
+        div.main {
+          max-width: 1366px;
+          margin: auto;
+          border: 1px solid #FFFFFF;
+          background-color: #f0f2f5;
+          opacity:0.9;
+    
+        }
+    
+        body {
+          background-image: url('{{url_for( 'static', filename= 'assets/img/w1.jpg') }}');
+          background-size: cover;
+          background-repeat: no-repeat;
+          background-attachment: fixed;
+        }
+    
+      </style>
+
+        <!--   Core JS Files   -->
+    <script src="{{url_for( 'static', filename= 'assets/js/core/popper.min.js') }}" type="text/javascript"></script>
+    <script src="{{url_for( 'static', filename= 'assets/js/core/bootstrap.min.js') }}" type="text/javascript"></script>
+    <script src="{{url_for( 'static', filename= 'assets/js/plugins/perfect-scrollbar.min.js') }}" type="text/javascript"></script>
+    <script src="{{url_for( 'static', filename= 'assets/js/plugins/moment.min.js') }}"></script>
+
+
+    <!-- Plugin for the Sliders, full documentation here: http://refreshless.com/nouislider/ -->
+    <script src="{{url_for( 'static', filename= 'assets/js/plugins/nouislider.min.js') }}"></script>
+
+    <!--  Plugin for the Carousel, full documentation here: http://jedrzejchalubek.com/  -->
+    <script src="{{url_for( 'static', filename= 'assets/js/plugins/glidejs.min.js') }}"></script>
+
+    <!--	Plugin for Select, full documentation here: https://joshuajohnson.co.uk/Choices/ -->
+    <script src="{{url_for( 'static', filename= 'assets/js/plugins/choices.min.js') }}" type="text/javascript"></script>
+
+
+    <!-- Control Center for Material Kit parallax effects, scripts for the example pages etc -->
+    <script src="{{url_for( 'static', filename= 'assets/js/material-kit.min.js') }}" type="text/javascript"></script>
+    <link rel="stylesheet" href="{{url_for( 'static', filename= 'assets/css/daterangepicker.css') }}">
+
+
+</head>
+
+<body>
+
+    <body>
+        <div class="main">
+          <div class="row">
+            <div class="col-lg-1"></div>
+             <div class="col-lg-10">
+               <div class="row mt-3">
+                 <div class="col-12">
+                   <div class="position-relative border-radius-xl overflow-hidden shadow-lg mb-7">
+                     <div class="container border-bottom"> 
+                       <div class="row justify-space-between py-2"> 
+                         <div class="col-lg-4 me-auto"> 
+                           <p class="lead text-dark pt-1 mb-0"> H2Search</p>
+                         </div>
+                       </div>
+                     </div>
+            <form action="{{ url_for('results') }}" method = "get" id="formAdd" name="formAdd">
+              <div class="row">
+                <div class="col-lg-1"></div>
+                <div class="col-lg-4">
+                          
+                  <div class="row">
+                    <div class="col-sm-5">Ranking Result:</div>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="tfidf" id="check1" name="ranking" default>
+                              <label class="form-check-label" for="check1">
+                                TF-IDF
+                              </label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="bm25" id="check2" name="ranking">
+                              <label class="form-check-label" for="check2">
+                                BM25
+                              </label>
+                            </div>
+                    
+                    &nbsp;
+                  </div>
+        
+                    <div class="col-sm-4">Domain Ending:</div>
+                    <div class="form-check">
+                      <input class="form-check-input" name="domain" type="checkbox" value="org" id="checkdom1">
+                      <label class="form-check-label" for="checkdom1">
+                        .org
+                      </label>
+                    </div>
+        
+                    <div class="form-check">
+                    <input class="form-check-input" name="domain" type="checkbox" value="gov" id="checkdom2" >
+                    <label class="form-check-label" for="checkdom2">
+                      .gov
+                    </label>
+                    </div>
+                    
+                    <div class="form-check">
+                    <input class="form-check-input" name="domain" type="checkbox" value="com" id="checkdom3" >
+                    <label class="form-check-label" for="checkdom3">
+                      .com
+                    </label>
+                    </div>
+        
+                    
+                </div>
+        
+                <div class="col-lg-5">
+                  <div class="input-group input-group-dynamic mb-2">
+                    <span class="input-group-text"></span>
+                    <input class="form-control" placeholder="Keyword" type="text" name="searchbar"><button type="button" class="btn btn-default addButton"><i class="fa fa-plus"></i></button>
+                  </div>
+                  <div class="form-group row" style="display:none" id="optionTemplate">
+                    <div class="row-sm-1">
+                      <select name="select" id="select">
+                      <option value="and">AND</option>
+                      <option value="or">OR</option></select>
+                    </div>
+                  <div class="input-group input-group-dynamic mb-2">
+                    <span class="input-group-text"></span>
+                    <input class="form-control" placeholder="Keyword" type="text" name="searchbar"> <button type="button" class="btn btn-default removeButton"><i class="fa fa-minus"></i></button>
+                  </div>
+                </div>
+                  <button type="submit" class="btn bg-gradient-primary w-auto me-2">Search</button> 
+                </div>
+        
+              </div>
+        
+              <script src="{{url_for( 'static', filename= 'assets/js/jquery.min.js') }}" type="text/javascript"></script>
+              <script src="{{url_for( 'static', filename= 'assets/js/daterangepicker.js') }}" type="text/javascript"></script>
+              <script src="{{url_for( 'static', filename= 'assets/js/moment.min.js') }}" type="text/javascript"></script>
+              <script src="{{url_for( 'static', filename= 'assets/js/core/popper.min.js') }}" type="text/javascript"></script>
+              <script src="{{url_for( 'static', filename= 'assets/js/core/bootstrap.min.js') }}" type="text/javascript"></script>
+              <script src="{{url_for( 'static', filename= 'assets/js/material-kit.min.js') }}" type="text/javascript"></script>
+              <script src="{{url_for( 'static', filename= 'assets/js/plugins/flatpickr.min.js') }}"> </script>
+        
+                </script>
+           
+              <script>
+                $(document).ready(function(){
+                
+                    // Add button click handler	    
+                    
+                    $('#formAdd')
+                   
+                  .on('click', '.addButton', function() {
+                     
+                      var $template = $('#optionTemplate'),
+                        $clone    = $template
+                                          .clone()
+                                          .removeAttr('id')
+                                          .insertBefore($template)
+                                          .removeAttr('style')
+                                          
+                  })
+                
+                
+                   // Remove button click handler
+                    .on('click', '.removeButton', function() {
+                            var $row = $(this).parents('.form-group')
+                                
+                
+                            // Remove element containing the option
+                            $row.remove();
+                
+                        })
+                  
+                
+                });
+                </script>
+
+            </form>
+            
+            
+            <!--Search Result-->
+            <div class="row">
+             <div class="col-lg-1"></div>
+              <div class="col-lg-10">
+                <div class="row mt-3">
+                  <div class="col-12">
+                    <div class="position-relative border-radius-xl overflow-hidden shadow-lg mb-7">
+                      <div class="container border-bottom"> 
+                        <div class="row justify-space-between py-2"> 
+                          <div class="col-lg-4 me-auto"> 
+                            <p class="lead text-dark pt-1 mb-0"> Search Result</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="tab-content tab-space">
+                        <div class="tab-pane active" id="preview-inputs-2">
+                         
+                          <iframe width="100%" height="600px" srcdoc='<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+                            <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+                            <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+                            <!-- Material Icons -->
+                            <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+                            <link id="pagestyle" href="{{url_for( 'static', filename= 'assets/css/material-kit.min.css') }}" rel="stylesheet" />
+                           
+                            <div class="row text-left py-2 mt-3">
+                                           
+                            <!-- Search inputs -->
+                            
+                              
+                            <div class="col-9 mx-auto">
+                             
+                              {% block body %}
+
+
+
+                              {% endblock %}
+                              
+                              <style>
+                                .center {
+                                  text-align: center;
+                                }
+                                
+                                .pagination {
+                                  display: inline-block;
+                                }
+                                
+                                .pagination a {
+                                  color: black;
+                                  float: left;
+                                  padding: 8px 16px;
+                                  text-decoration: none;
+                                  border: 1px solid #ddd;
+                                }
+                                
+                                .pagination a.active {
+                                  background-color: #4CAF50;
+                                  color: white;
+                                  border: 1px solid #4CAF50;
+                                }
+                                
+                                .pagination a:hover:not(.active) {background-color: #ddd;}
+                                
+                                .pagination a:first-child {
+                                  border-top-left-radius: 5px;
+                                  border-bottom-left-radius: 5px;
+                                }
+                                
+                                .pagination a:last-child {
+                                  border-top-right-radius: 5px;
+                                  border-bottom-right-radius: 5px;
+                                }
+                                </style>
+                                
+                            </div>
+                           </div>
+                  
+                            <script src="{{url_for( 'static', filename= 'assets/js/core/popper.min.js') }}" type="text/javascript"></script>
+                            <script src="{{url_for( 'static', filename= 'assets/js/core/bootstrap.min.js') }}" type="text/javascript"></script>
+                            <script src="{{url_for( 'static', filename= 'assets/js/material-kit.min.js') }}" type="text/javascript"></script>
+                            <script src="{{url_for( 'static', filename= 'assets/js/plugins/flatpickr.min.js') }}"> </script>
+                            <script>
+                              if (document.querySelector(".datepicker")) {
+                                 flatpickr(".datepicker", {});
+                              }
+                            </script>
+                          '></iframe> 
+                        </div>
+                      </div>
+                    </div>
+                </div> 
+                    
+            </div>
+          
+        </div>
+        
+        
+        
+          
+        </div>
+        
+        </body>
+
+</body>
+
+</html>
