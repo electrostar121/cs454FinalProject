@@ -4,6 +4,8 @@ import numpy as np
 import json
 import gc
 
+#version 1 of page rank, used up too much ram had to redo
+
 def CDtoCM(connectionDict, urlList):
     restructured = []
     keyValues = []

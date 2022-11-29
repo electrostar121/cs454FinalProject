@@ -1,6 +1,6 @@
 import json
 
-def main():
+def main():#this just cleans up the visted links in the profile json
     with open("profile.json", 'r') as file:
         data = json.load(file)
         

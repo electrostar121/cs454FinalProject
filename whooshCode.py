@@ -7,6 +7,8 @@ from whoosh import scoring
 from whoosh import qparser
 import json
 
+#this just creates the whoosh index, takes a little bit to run
+
 
 def indexAdd(ix, location):#this function adds to the index from the file location
     writer = ix.writer()

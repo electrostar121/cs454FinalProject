@@ -9,6 +9,8 @@ from whoosh import qparser
 from urllib.parse import urlparse
 import json
 
+#this is what runs the entire website
+
 schema = Schema(url = ID(stored=True), content = TEXT(analyzer = StemmingAnalyzer(), stored=True))
 ix = index.open_dir("indexdir")
 
@@ -18,7 +20,7 @@ comb = []
 searchResults = []
 restrictDomain = []
 
-with open("prScores.json", "r") as f:
+with open("prScores.json", "r") as f:#preloads the page rank scores
     scores = json.load(f)
 
 def custom_scoring(searcher, fieldname, text, matcher):
@@ -34,7 +36,7 @@ def custom_scoring(searcher, fieldname, text, matcher):
 
     return ranked
 
-def whooshSearch():
+def whooshSearch():#this is where all the searching gets done
     customWeighting = scoring.FunctionWeighting(custom_scoring)
 
     urls = []
@@ -46,14 +48,14 @@ def whooshSearch():
 
         i = 1
 
-        while i < len(queries):
+        while i < len(queries):#does all the queries
             if("" == query):
                 continue
 
             qp = QueryParser("content", schema=ix.schema).parse(queries[i])
             nextPart = searcher.search(qp, limit=None)
 
-            if(comb[i - 1] == "and"):
+            if(comb[i - 1] == "and"):#this is where the combination of the queries happens
                 docs.upgrade(nextPart)
             elif(comb[i - 1] == "or"):
                 docs.upgrade_and_extend(nextPart)
@@ -62,7 +64,7 @@ def whooshSearch():
 
             i += 1
             
-        if restrictDomain:
+        if restrictDomain:#checks to see if we restrict what domain ending we can search
             for hit in docs:
                 for domain in restrictDomain:
                     if domain in hit["url"]:
@@ -73,15 +75,15 @@ def whooshSearch():
                 urls.append(hit["url"])
                 content.append(hit["content"][:200])
 
-    return urls, content
+    return urls, content#returns the urls and content
 
 app=Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template("index.html")
+    return render_template("index.html")#gets the home page
 
-@app.route('/results/', methods=['GET', 'POST'])
+@app.route('/results/', methods=['GET', 'POST'])#results page
 def results():
     if request.method == 'POST':
         data = request.form
@@ -105,13 +107,15 @@ def results():
     
     urlparse("scheme://netloc/path;parameters?query#fragment")
     
-    for url in urls:
+    for url in urls:#generates the titles from the urls, was dumb and forgot to save titles while crawling
         urlParsed = urlparse(url)
         title = urlParsed.path.replace("/", " ") + " " + urlParsed.netloc
         sudoTitles.append(title)
  
-    return render_template('results.html', results = zip(urls, content, sudoTitles))
+    return render_template('results.html', results = zip(urls, content, sudoTitles))#sends it to be placed on page
 
+
+#everything below can be used as an api sort of thing, otherwise its never used
 @app.route('/query<num>/<query>')
 def query(num, query):
     try:

@@ -3,6 +3,9 @@ import pandas as pd
 import numpy as np
 import json
 
+#version 2, does a list of list and then converts into a numpy array to do the calculations on, then saves it to a json file
+#still used to much ram, but had enough to get it all calculated
+
 def CDtoCM(connectionDict, urlList):
     restructured = []
     keyValues = []

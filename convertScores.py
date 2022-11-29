@@ -1,5 +1,7 @@
 import json
 
+#this is used to take the scores we got from page rank and create a dict/json out of it
+
 def main():
     with open("optimized.json", 'r') as file:
         data = json.load(file)

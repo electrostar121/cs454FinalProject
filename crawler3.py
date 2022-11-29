@@ -43,35 +43,35 @@ def crawler3(profile):
             print("Queue emptied before reaching the limit")
             break
 
-        urlParsed = urlparse(urlCurrent)
+        urlParsed = urlparse(urlCurrent)#parses the url
         domainPrevious = domainCurrent
         domainCurrent = urlParsed.scheme + "://" + urlParsed.netloc
 
-        if(domainCurrent != domainPrevious) and (domainCurrent not in bannedDomains):
+        if(domainCurrent != domainPrevious) and (domainCurrent not in bannedDomains):#checks to see if its banned or if its a new domain
             print("Entered a different domain")
 
             rp = urllib.robotparser.RobotFileParser()
 
             try:
                 f = urllib.request.urlopen(domainCurrent + "/robots.txt", timeout=10)
-                raw = f.read()
+                raw = f.read()#read the robots.txt file
                 rp.parse(raw.decode("utf-8").splitlines())
             except:
                 bannedDomains.append(domainCurrent)
-                print("Cannot read the robots.txt file, banning domain")
+                print("Cannot read the robots.txt file, banning domain")#bans domain if it cant read robots.txt in 10 secs
             else:
-                crawlDelay = rp.crawl_delay("*")
+                crawlDelay = rp.crawl_delay("*")#set crawl delay
                 if crawlDelay is None:
                     crawlDelay = defaultDelay
 
                 print("Read the robots.txt and set crawl delay")
 
         if (urlCurrent not in urlsVisted) and (domainCurrent not in bannedDomains):
-            if(rp.can_fetch("*", urlCurrent)):
+            if(rp.can_fetch("*", urlCurrent)):#checks to see if we are allowed to read the page
                 time.sleep(crawlDelay)
 
                 try:
-                    result = requests.get(urlCurrent)
+                    result = requests.get(urlCurrent)#tries reading the page
                     canRead = True
                 except:
                     print("Skipping URL: Had issue getting webpage")
@@ -80,7 +80,7 @@ def crawler3(profile):
                 if canRead:
                     rawPage = result.text
                     bs = BeautifulSoup(rawPage, 'lxml')
-                    content = bs.get_text("\n", strip=True)
+                    content = bs.get_text("\n", strip=True)#grabs the contents of the page
 
                     searchable = content.lower()
 
@@ -88,9 +88,9 @@ def crawler3(profile):
                         if word in searchable:
 
                             fileName = urlCurrent.replace('/', '').replace(':', '').replace('\n', '').replace('?', '').replace('=', '')#creates the url file name
-                            fileName = fileName[:128]
+                            fileName = fileName[:128]#creates a file name out of url
 
-                            endResult = {
+                            endResult = {#saves the url and contents of page
 
                                 "url": urlCurrent,
 
@@ -101,7 +101,7 @@ def crawler3(profile):
                             with open(saveLocation + f"/pages/{fileName}.json", "w") as file:
                                 json.dump(endResult, file, indent=4)
 
-                            urlsVisted.append(urlCurrent)
+                            urlsVisted.append(urlCurrent)#adds to list of urls we actully visted to make sure we never come back
 
                             pagesRead += 1
 
@@ -139,7 +139,7 @@ def crawler3(profile):
                             print("Page has finished reading")
 
 
-                            if(pagesRead % profile["saveInterval"] == 0):
+                            if(pagesRead % profile["saveInterval"] == 0):#saves if we have reached the designated saving spots
                                 print("Saving...")
                                 profile["queue"] = queue
                                 profile["urlsVisted"] = urlsVisted
