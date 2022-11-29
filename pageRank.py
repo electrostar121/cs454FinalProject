@@ -1,41 +1,62 @@
 from sklearn.feature_extraction import DictVectorizer
 import pandas as pd
+import numpy as np
+import json
+import gc
 
-test = {
+def CDtoCM(connectionDict, urlList):
+    restructured = []
+    keyValues = []
 
-    "website3": ["website2", "website3", "website1"],
-    "website1": ["website2", "website3"],
-    "website2": []
-
-}
-
-listOfUrls = ["website1", "website2", "website3"]
-
-restructured = []
-keyValues = []
-
-flag = True
-i = 0
-
-for key in test:
-    data_dict = {}
-    for url in listOfUrls:
-        if url in test[key]:
-            data_dict[url] = 1
-        else:
-            data_dict[url] = 0
-            
-    restructured.append(data_dict)
-    keyValues.append(key)
-    
-dv = DictVectorizer()
-df = pd.DataFrame(dv.fit_transform(restructured).todense(), columns=dv.feature_names_, index=dict(enumerate(keyValues))).rename(index=dict(enumerate(keyValues)))
-    
-#print(df)
-
-#print(df.loc["website3", :])
-
-for item in keyValues:
-    for item2 in listOfUrls:
-        print(df.loc[item, item2])
+    for key in connectionDict:
+        data_dict = {}
+        for url in urlList:
+            if url in connectionDict[key]:
+                data_dict[url] = 1
+            else:
+                data_dict[url] = 0
         
+        gc.collect()
+                        
+        restructured.append(data_dict)
+        keyValues.append(key)
+        
+    dv = DictVectorizer()
+    df = pd.DataFrame(dv.fit_transform(restructured).todense(), columns=dv.feature_names_, index=dict(enumerate(keyValues))).rename(index=dict(enumerate(keyValues)))
+    
+    rowTotals = df.sum(axis = 1)
+    
+    for key in keyValues:
+        df = df.apply(lambda x: (x / rowTotals[key]) if (x.name == key and rowTotals[key] != 0.0) else x, axis = 1)
+    
+    return df, keyValues
+
+def pagerank(matrix, numOfUrls, num_iterations = 100, d = 0.85):
+    v = np.ones(numOfUrls) / numOfUrls
+    print(v)
+    M_hat = (d * matrix + (1 - d) / numOfUrls)
+    for i in range(num_iterations):
+        v = M_hat @ v
+    return v
+
+def main():
+    with open("optimized.json", 'r') as file:
+        data = json.load(file)
+
+    df, keyValues = CDtoCM(data["connections"], data["urlsVisted"])
+    
+    result = pagerank(df.to_numpy().T, len(data["urlsVisted"]))
+    result = result / sum(result)
+    
+    endResult = {}
+    
+    for index, key in enumerate(keyValues):
+        endResult[key] = result[index]
+        
+    with open("prScores.json", "w") as f:
+        json.dump(endResult, f)
+    
+    print(endResult)
+
+if __name__ == "__main__":
+    main()
